@@ -1,4 +1,5 @@
 var http = require('http');
+var employeeService = require('./lib/employees');
 
 http.createServer(function (req, res) {
   // A parsed URL to work with in case there are parameters.
@@ -17,16 +18,30 @@ http.createServer(function (req, res) {
 
   if (_url = /^\/employees$/i.exec(req.url)) {
     // Return a list of valid employees.
-    res.writeHead(200);
-    return res.end('employee list');
+    empolyeeService.getEmployees(function (error, data) {
+      if (error) {
+        // Send a 500 error.
+        res.writeHead(500);
+      }
+      // Send the data with a 200 status code.
+    });
   } else if (_url = /^\/employees\/(\d+)$/i.exec(req.url)) {
     // Find the employee by the id in the route.
-    res.writeHead(200);
-    return res.end('a single employee');
+    employeeService.getEmployee(_url[1], function (error, data) {
+      if (error) {
+        // Send a 500 error.
+        res.writeHead(500);
+      }
+
+      if (!data) {
+        // Send a 404 error.
+        res.writeHead(404);
+      }
+
+      // Send the data with a 200 status code.
+    });
   } else {
-    // Try to send the static file.
-    res.writeHead(200);
-    return res.end('static file maybe');
+    // Try to send the static file if it exists, if not, send a 404.
   }
 }).listen(1337, '127.0.0.1');
 
