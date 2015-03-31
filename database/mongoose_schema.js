@@ -117,6 +117,53 @@ function insertEmployees (pd, devops, acct, callback) {
   })
 }
 
+function retrieveEmployee (data, callback) {
+  Employee.findOne({
+    _id: data.employee._id
+  }).populate('team').exec(function (error, result) {
+    if (error) {
+      return callback (error);
+    } else {
+      console.log('*** Single Employee Result ***');
+      console.dir(result);
+      callback(null, data);
+    }
+  });
+}
+
+function retrieveEmployees (data, callback) {
+  Employee.find({
+    'name.first': /J/i
+  }, function (error, results) {
+    if (error) {
+      return callback(error);
+    } else {
+      console.log('*** Multiple Employees Result ***');
+      console.dir(results);
+      callback(null, data);
+    }
+  });
+}
+
+function updateEmployee (first, last, data, callback) {
+  console.log('*** Changing names ***');
+  console.dir(data.employee);
+
+  var employee = data.employee;
+  employee.name.first = first;
+  employee.name.last = last;
+
+  employee.save(function (error, result) {
+    if (error) {
+      return callback(error);
+    } else {
+      console.log('*** Changed name to Andrew Jackson ***');
+      console.log(result);
+      callback(null, data);
+    }
+  });
+}
+
 mongoose.connect(dbUrl, function (err) {
   if (err) {
     return console.log('There was a problem connecting to the database!' + err);
@@ -128,14 +175,23 @@ mongoose.connect(dbUrl, function (err) {
       return console.log(err)
     }
     insertEmployees(pd, devops, acct, function (err, result) {
-      if (err) {
-        console.error(err);
-      } else {
-        console.info('Database activity complete.')
-      }
 
-      db.close();
-      process.exit();
+      retrieveEmployee(result, function (err, result) {
+
+        retrieveEmployees(result, function (err, result) {
+
+          updateEmployee(result, function (err, result) {
+            if (err) {
+              console.error(err);
+            } else {
+              console.info('Database activity complete.')
+            }
+
+            db.close();
+            process.exit();
+          });
+        });
+      });
     });
   });
 });
