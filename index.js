@@ -20,7 +20,7 @@ http.createServer(function (req, res) {
 
   if (_url = /^\/employees$/i.exec(req.url)) {
     // Return a list of valid employees.
-    empolyeeService.getEmployees(function (error, data) {
+    employeeService.getEmployees(function (error, data) {
       if (error) {
         // Send a 500 error.
         return responder.send500(error, res);
