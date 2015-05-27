@@ -2,6 +2,7 @@ var http = require('http');
 var employeeService = require('./lib/employees');
 var responder = require('./lib/responseGenerator');
 var staticFile = responder.staticFile('/public');
+require('./lib/connection');
 
 http.createServer(function (req, res) {
   // A parsed URL to work with in case there are parameters.
