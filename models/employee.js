@@ -17,7 +17,7 @@ var EmployeeSchema = new Schema({
     }
   },
   team: {
-    type: Schema.Types.ObjetId,
+    type: Schema.Types.ObjectId,
     ref: 'Team'
   },
   image: {
